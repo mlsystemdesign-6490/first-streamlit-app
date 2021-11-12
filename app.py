@@ -20,7 +20,7 @@ from sklearn.linear_model import LogisticRegression
 import plotly.express as px
 
 st.title("Iris Dataset")
-st.markdown("Yunxin Liu")
+st.markdown("Yunxin Liu - HW1")
 st.sidebar.header('User Input Parameters')
 
 def user_input_features():
