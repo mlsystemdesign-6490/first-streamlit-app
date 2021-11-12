@@ -1,81 +1,71 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-
-
-@author: hamzafarooq@ MABA CLASS
+@author: Yunxin
 """
 
+from __future__ import print_function
+from builtins import range
 import streamlit as st
 import pandas as pd
-
+import numpy as np
+from sklearn import datasets
+from matplotlib import pyplot as plt
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticDiscriminantAnalysis
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.linear_model import LogisticRegression
 import plotly.express as px
 
+st.title("Wine Dataset")
+st.markdown("Yunxin Liu")
+st.sidebar.header('User Input Parameters')
 
+def user_input_features():
+    sepal_length = st.sidebar.slider('Sepal length', 4.3, 7.9, 5.4)
+    sepal_width = st.sidebar.slider('Sepal width', 2.0, 4.4, 3.4)
+    petal_length = st.sidebar.slider('Petal length', 1.0, 6.9, 1.3)
+    petal_width = st.sidebar.slider('Petal width', 0.1, 2.5, 0.7)
+    data = {'sepal_length': sepal_length,
+            'sepal_width': sepal_width,
+            'petal_length': petal_length,
+            'petal_width': petal_width}
+    features = pd.DataFrame(data, index=[0])
+    return features
 
+df = user_input_features()
 
+st.subheader('User Input parameters')
+st.write(df)
 
-st.title("Welcome to MABA Class")
-st.markdown("This is a demo Streamlit app.")
-st.markdown("My name is Yunxin , hello world!..")
-st.markdown("This is v2")
+iris = datasets.load_iris()
+X = iris.data
+Y = iris.target
 
-@st.cache(persist=True)
-def load_data():
-    df = pd.read_csv("https://datahub.io/machine-learning/iris/r/iris.csv")
-    return(df)
+st.subheader('Class labels and their corresponding index number')
+st.write(iris.target_names.reshape(1,3))
 
+models = []
+pred = []
 
+models.append(('Decision Tree', DecisionTreeClassifier(max_depth = 3, random_state = 1)))
+models.append(('Gaussian Naive Bayes', GaussianNB()))
+models.append(('LDA', LinearDiscriminantAnalysis()))
+models.append(('QDA', QuadraticDiscriminantAnalysis()))
+models.append(('KNN', KNeighborsClassifier(n_neighbors = 3)))
+models.append(('Logistic Regression', LogisticRegression(solver = 'newton-cg')))
+models.append(('Linear SVC', SVC(kernel='linear')))
 
-def run():
-    st.subheader("Iris Data Loaded into a Pandas Dataframe.")
+for name, model in models:
+    pred.append(iris.target_names[model.fit(X,Y).predict(df)])
 
-    df = load_data()
+idx = [models[i][0] for i in range(len(models))]
+pred = pd.DataFrame(pred, columns = ['Prediction'], index = idx)
 
+st.subheader('Prediction for each classifier')
+st.write(pred)
 
-
-    disp_head = st.sidebar.radio('Select DataFrame Display Option:',('Head', 'All'),index=0)
-
-
-
-    #Multi-Select
-    #sel_plot_cols = st.sidebar.multiselect("Select Columns For Scatter Plot",df.columns.to_list()[0:4],df.columns.to_list()[0:2])
-
-    #Select Box
-    #x_plot = st.sidebar.selectbox("Select X-axis Column For Scatter Plot",df.columns.to_list()[0:4],index=0)
-    #y_plot = st.sidebar.selectbox("Select Y-axis Column For Scatter Plot",df.columns.to_list()[0:4],index=1)
-
-
-    if disp_head=="Head":
-        st.dataframe(df.head())
-    else:
-        st.dataframe(df)
-    #st.table(df)
-    #st.write(df)
-
-
-    #Scatter Plot
-    fig = px.scatter(df, x=df["sepallength"], y=df["sepalwidth"], color="class",
-                 size='petallength', hover_data=['petalwidth'])
-
-    fig.update_layout({
-                'plot_bgcolor': 'rgba(0, 0, 0, 0)'})
-
-    fig.update_xaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
-    fig.update_yaxes(showgrid=True, gridwidth=1, gridcolor='lightgray')
-
-    st.write("\n")
-    st.subheader("Scatter Plot")
-    st.plotly_chart(fig, use_container_width=True)
-
-
-    #Add images
-    #images = ["<image_url>"]
-    #st.image(images, width=600,use_container_width=True, caption=["Iris Flower"])
-
-
-
-
-
-if __name__ == '__main__':
-    run()
+st.subheader('Prediction from the majority of classifiers')
+st.write(pred['Prediction'].value_counts().index[0])
