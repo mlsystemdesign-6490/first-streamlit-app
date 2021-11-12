@@ -20,9 +20,11 @@ from sklearn.linear_model import LogisticRegression
 import plotly.express as px
 
 st.title("Iris Dataset")
+st.subheader('Overview')
 st.markdown("Yunxin Liu - HW1")
-st.sidebar.header('User Input Parameters')
+st.markdown("This is a classification model performed on the Iris dataset - one of the best known dataset in the world of data science. The major question I'm trying to answer with the classification model is as follows: Also which of the petal/sepal measurements are more useful features to look at?")
 
+st.sidebar.header('User Input Parameters')
 def user_input_features():
     sepal_length = st.sidebar.slider('Sepal length', 4.3, 7.9, 5.4)
     sepal_width = st.sidebar.slider('Sepal width', 2.0, 4.4, 3.4)
@@ -69,3 +71,8 @@ st.write(pred)
 
 st.subheader('Prediction from the majority of classifiers')
 st.write(pred['Prediction'].value_counts().index[0])
+
+st.subheader('Reflection')
+st.markdown("This one I used a simple classification. I hope next class I'll be able to use other more advanced modeling.")
+
+#code credits to https://github.com/terryz1/Iris_Classification/blob/master/Iris_demo_app.py
