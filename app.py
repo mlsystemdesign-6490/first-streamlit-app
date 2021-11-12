@@ -19,7 +19,7 @@ from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
 import plotly.express as px
 
-st.title("Wine Dataset")
+st.title("Iris Dataset")
 st.markdown("Yunxin Liu")
 st.sidebar.header('User Input Parameters')
 
